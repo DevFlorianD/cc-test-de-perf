@@ -27,13 +27,13 @@ class Comment
     private $content;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Trick", inversedBy="comments", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Trick", inversedBy="comments", cascade={"persist"}, fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(nullable=false)
      */
     private $trick;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", fetch="EXTRA_LAZY")
      * @ORM\JoinColumn()
      */
     private $user;

@@ -8,7 +8,7 @@ parameters:
 doctrine:
     dbal:
         # configure these for your database server
-        driver: 'pdo_mysql'
+#        driver: 'pdo_mysql'
         server_version: '5.7'
         charset: utf8
         default_table_options:
@@ -16,8 +16,14 @@ doctrine:
             collate: utf8_general_ci
 
         url: '%env(resolve:DATABASE_URL)%'
+
         unix_socket: '%env(resolve:UNIX_SOCKET)%'
     orm:
+
+        metadata_cache_driver: apcu
+        query_cache_driver: apcu
+        result_cache_driver: apcu
+
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true

@@ -1,0 +1,55 @@
+version: "3"
+
+services:
+
+    php:
+        build: docker/php
+        volumes:
+            - './:/usr/share/nginx/html:consistent'
+        depends_on:
+            - mariadb
+    nginx:
+        build: docker/nginx
+        ports:
+            - '8080:80'
+        volumes:
+            - './:/usr/share/nginx/html:consistent'
+        depends_on:
+            - php
+    mariadb:
+        restart: always
+        container_name: mariadb
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_DATABASE: snowtricks
+        ports:
+        - '3306:3306'
+        volumes:
+            - ./mariadb:/var/lib/mysql
+        command: ["mysqld"]
+    vegeta:
+        build: docker/vegeta
+        user: vegeta
+        working_dir: /home/vegeta
+        command: sh -c 'echo "GET http://nginx/login" | vegeta attack -duration=30s -rate=10 | vegeta report -output="metrics.json" -type=json'
+        volumes:
+            - .:/home/vegeta
+    blackfire:
+        image: blackfire/blackfire
+        ports: ["8707"]
+        environment:
+            # Exposes BLACKFIRE_* environment variables from the host
+            BLACKFIRE_SERVER_ID: 'a35a4a99-f8f7-40f9-bf7d-c761c7ced50a'
+            BLACKFIRE_SERVER_TOKEN: '7e9933bcbbded01146c3bb31d2f402426484a868853e271184443a1ce4e6ff02'
+            BLACKFIRE_CLIENT_ID: '93e6717e-c271-43b0-acd5-a82870555ab7'
+            BLACKFIRE_CLIENT_TOKEN: '6e22a14a870cb2258d3c38b7e43d286b0e46acf70f2fdc5e2699066724f0dd31'
+    composer:
+        container_name: composer
+        build: docker/composer
+        tty: true
+        user: composer
+        entrypoint: composer
+        working_dir: /home/composer
+        volumes:
+            - .:/home/composer

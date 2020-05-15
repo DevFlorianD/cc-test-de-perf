@@ -54,7 +54,7 @@ class Trick
 
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="trick", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="trick", cascade={"persist","remove"}, fetch="EXTRA_LAZY")
      */
     private $comments;
 
